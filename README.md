@@ -36,6 +36,8 @@ This command will install all necessary libraries as listed in the `requirements
 - **Graph Generation**: Generates a line graph with the timestamp on the x-axis.
 - **Statistical Analysis**: Calculates and displays mean, median, standard deviation, minimum, and maximum for each numeric column in the graph.
 
+![image](./image/preview.png)
+
 ## Notes
 
 - Ensure all CSV files have the same structure and headers.
