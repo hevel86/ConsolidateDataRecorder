@@ -1,13 +1,24 @@
-# CSV Consolidation Tool
+# CSV Consolidation and Analysis Tool
 
 ## Overview
 
-This Python tool consolidates multiple CSV files into a single file. It is designed to handle CSV files where data starts from line 5 and originally uses semicolons (`;`) as separators. The consolidated file will use commas (`,`) as separators.
+This tool consolidates multiple CSV files into a single file and generates a line graph using the timestamp as the x-axis. It includes statistical analysis such as averages, medians, standard deviations, minimums, and maximums for each numeric column.
 
 ## Requirements
 
 - Python 3.x
-- tkinter (for the GUI directory selection)
+- Libraries: pandas, matplotlib
+- tkinter for the GUI directory selection
+
+## Installation
+
+To install required libraries, run:
+
+```bash
+pip install -r requirements.txt
+```
+
+This command will install all necessary libraries as listed in the `requirements.txt` file.
 
 ## Usage
 
@@ -15,25 +26,25 @@ This Python tool consolidates multiple CSV files into a single file. It is desig
 
 2. **Selecting Directory**: Use the GUI to select the directory containing your CSV files.
 
-3. **Output**: The script will create a consolidated CSV file named `corrected_consolidated.csv` in the same directory, with data entries separated by commas.
+3. **Output**:
+   - The script will create a consolidated CSV file named `corrected_consolidated.csv` in the same directory, with data entries separated by commas.
+   - A line graph with statistical data for each numeric column will be displayed.
 
-## How It Works
+## Features
 
-- The script reads each CSV file in the selected directory, assuming they use `;` as a delimiter.
-- The first four lines of each file are skipped, as data starts from line 5.
-- Headers are read from the first file, and subsequent files' headers are ignored.
-- Data from all files is consolidated under these headers.
-- The output file is created using `,` as a delimiter.
+- **CSV Consolidation**: Combines multiple CSV files (semicolon-separated) into a single comma-separated CSV file.
+- **Graph Generation**: Generates a line graph with the timestamp on the x-axis.
+- **Statistical Analysis**: Calculates and displays mean, median, standard deviation, minimum, and maximum for each numeric column in the graph.
 
 ## Notes
 
-- Ensure that all CSV files in the directory have the same structure and headers.
-- The script handles files encoded in UTF-8 and falls back to ISO-8859-1 in case of encoding issues.
+- Ensure all CSV files have the same structure and headers.
+- The script expects the 'Timestamp' column to be in a specific format. Adjust the `date_format` in the script if necessary.
 
 ## Troubleshooting
 
+- **Timestamp Format**: If the graph does not display correctly, ensure the timestamp format in the script matches the format in your CSV files.
 - **Encoding Errors**: If you encounter encoding errors, check if your CSV files have a consistent encoding format.
-- **Missing Data**: Ensure that all files follow the expected format with data starting from line 5.
 
 ## License
 
