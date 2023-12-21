@@ -3,12 +3,14 @@ import glob
 import os
 import tkinter as tk
 from tkinter import filedialog
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def select_directory():
     root = tk.Tk()
-    root.withdraw()  # Hide the main window
-    directory = filedialog.askdirectory()  # Show the dialog to choose a directory
+    root.withdraw()
+    directory = filedialog.askdirectory()
     root.destroy()
     return directory
 
@@ -32,30 +34,61 @@ def consolidate_csv_correctly(directory, output_filename):
 
         for filename in glob.glob(files_pattern):
             lines = read_csv_file(filename)
-            if len(lines) <= 5:  # Skip files with not enough lines
+            if len(lines) <= 5:
                 continue
 
-            for _ in range(4):  # Skip first four lines
+            for _ in range(4):
                 lines.pop(0)
 
             if not headers_set:
-                headers = lines.pop(0)  # Read headers
-                writer = csv.writer(outfile)  # Default delimiter is comma
+                headers = lines.pop(0)
+                writer = csv.writer(outfile)
                 writer.writerow(headers)
                 headers_set = True
             else:
-                lines.pop(0)  # Skip the headers in subsequent files
+                lines.pop(0)
 
-            writer.writerows(lines)  # Write data
+            writer.writerows(lines)
 
-    return f"Consolidation complete. File saved as {output_file}"
+    return output_file
 
 
-# GUI for selecting directory
+def generate_graph(file_path):
+    # Adjust the format string to match your timestamp format
+    date_format = "%Y %m %d %H:%M:%S:%f"
+    data = pd.read_csv(file_path, delimiter=',')
+    data['Timestamp'] = pd.to_datetime(data['Timestamp'], format=date_format, errors='coerce')
+
+    # Calculate statistics for numeric columns only
+    stats = data.select_dtypes(include=['number']).agg(['mean', 'median', 'std', 'min', 'max'])
+
+    # Plotting
+    plt.figure(figsize=(15, 7))
+    for column in data.columns[1:]:  # Skip 'Timestamp' column
+        if data[column].dtype in ['float64', 'int64'] and not column.startswith('Unnamed'):
+            stat_text = (f"{column} - Avg: {stats[column]['mean']:.2f}, "
+                         f"Median: {stats[column]['median']:.2f}, "
+                         f"Std: {stats[column]['std']:.2f}, "
+                         f"Min: {stats[column]['min']:.2f}, "
+                         f"Max: {stats[column]['max']:.2f}")
+            plt.plot(data['Timestamp'], data[column], label=stat_text)
+
+    plt.xlabel('Timestamp')
+    plt.ylabel('Values')
+    plt.title('Line Graph of CSV Data with Statistics')
+    plt.legend()
+    plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+
+# Main execution
 directory = select_directory()
 if directory:
     output_filename = 'corrected_consolidated.csv'
-    consolidation_message = consolidate_csv_correctly(directory, output_filename)
-    print(consolidation_message)
+    consolidated_file = consolidate_csv_correctly(directory, output_filename)
+    print(f"Consolidation complete. File saved as {consolidated_file}")
+    generate_graph(consolidated_file)
 else:
     print("No directory selected. Operation cancelled.")
